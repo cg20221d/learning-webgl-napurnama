@@ -32,7 +32,7 @@ function main(){
     gl.compileShader(fragmentShaderObject, fragmentShaderCode);
     //#endregion
     
-    //#region analogous to linking
+    //#region analogous to linking and execution (using)
     let shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, vertexShaderObject);
     gl.attachShader(shaderProgram, fragmentShaderObject);
