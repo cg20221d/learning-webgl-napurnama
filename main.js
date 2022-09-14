@@ -1,7 +1,7 @@
 function main(){
 
 
-    let docCanvas = document.querySelector("#myCanvas");
+    let docCanvas = document.getElementById("myCanvas");
     let gl = docCanvas.getContext("webgl");
     
     //#region analogous to source code
@@ -9,15 +9,26 @@ function main(){
     let vertexShaderCode = 
     `
     void main(){
-        
+        float x = 0.0;
+        float y = 0.0;
+        float z = 0.0;
+        float w = 1.0;
+
+        gl_PointSize = 10.0;
+        gl_Position = vec4(x, y, z, w);
     }
     `; //program code
     
     // Fragment shader
     let fragmentShaderCode = 
     `
+    precision highp float;
     void main(){
-        
+        float r = 0.0;
+        float g = 0.0;
+        float b = 1.0;
+        float a = 1.0;
+        gl_FragColor = vec4(r, g, b, a);
     }
     `;
     //#endregion
@@ -29,7 +40,7 @@ function main(){
     
     let fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShaderObject, fragmentShaderCode);
-    gl.compileShader(fragmentShaderObject, fragmentShaderCode);
+    gl.compileShader(fragmentShaderObject);
     //#endregion
     
     //#region analogous to linking and execution (using)
@@ -41,6 +52,8 @@ function main(){
     //#endregion
 
 
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(1.0, 0.65, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.drawArrays(gl.POINTS, 0, 1);
 }
