@@ -3,4 +3,4 @@ NAUFAL ADLI PURNA**MA**
 
 **95MA**
 
-![canvas.png](WebGL-Result) WebGL Result
+![WebGL-Result](canvas.png) WebGL Result
