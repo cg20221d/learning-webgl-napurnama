@@ -1,27 +1,5 @@
 function main(){
-    let drawPoint = (gl, point_array) => {
-      gl.drawArrays(gl.POINTS, 0, point_array.length/dimension);
-    }
-
-    let drawLine = (gl, point_array) => {
-      gl.drawArrays(gl.LINES, 0, point_array.length/dimension);
-    }
-
-    let drawLineStrip = (gl, point_array) => {
-      gl.drawArrays(gl.LINE_STRIP, 0, point_array.length/dimension);
-    }
-
-    let drawLineLoop = (gl, point_array) => {
-      gl.drawArrays(gl.LINE_LOOP, 0, point_array.length/dimension);
-    }
-
-    let drawTriangle = (gl, point_array) => {
-      gl.drawArrays(gl.TRIANGLES, 0, point_array.length/dimension);
-    }
-
-    let drawTriangleStrip = (gl, point_array) => {
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, point_array.length/dimension);
-    }
+    
 
     let canvas = document.getElementById("myCanvas");
     let gl = canvas.getContext("webgl");
@@ -30,26 +8,16 @@ function main(){
     canvas.height = window.innerHeight;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-    const dimension = 2;
-    var vertices = [
-        0.0, 0.0,
-        1.0, 0.0,
-        -1.0, 0.0,
-        0.0, 1.0,
-        0.0, -1.0
-    ];
-
-    var buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
     //#region analogous to source code
     // Vertex shader
     let vertexShaderCode = 
     `
     attribute vec2 aPosition;
+    attribute vec3 aColor;
+    varying vec3 vColor;
 
     void main(){
+        vColor = aColor;
         float x = aPosition.x;
         float y = aPosition.y;
         float z = 0.0;
@@ -63,13 +31,12 @@ function main(){
     // Fragment shader
     let fragmentShaderCode = 
     `
-    precision highp float;
+    precision mediump float;
+    varying vec3 vColor;
+
     void main(){
-        float r = 0.0;
-        float g = 0.0;
-        float b = 1.0;
-        float a = 1.0;
-        gl_FragColor = vec4(r, g, b, a);
+        gl_FragColor.rgb = vColor;
+        gl_FragColor.a = 1.0;
     }
     `;
     //#endregion
@@ -92,19 +59,70 @@ function main(){
     gl.useProgram(shaderProgram);
     //#endregion
 
-    //Tell GPU how to collect position values from ARRAY_BUFFER for each vertex
-    var aPosition = gl.getAttribLocation(shaderProgram, "aPosition");
-    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(aPosition);
-
-    gl.clearColor(1.0, 0.65, 0.0, 1.0);
+    
+    gl.clearColor(1.0, 0.5, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
+    
+    const dimension = 2;
+    const subarrayLen = 5;
+    
 
-    // drawPoint(gl, vertices);
-    // drawLine(gl, vertices);
-    // drawLineStrip(gl, vertices);
-    // drawLineLoop(gl, vertices);
-    // drawTriangle(gl, vertices);
-    // drawTriangleStrip(gl, vertices);
+    var vertices = [
+      1.0, 0.0, 1.0, 1.0, 1.0,
+      -1.0, 0.0, 1.0, 1.0, 1.0,
+      0.0, 1.0, 1.0, 1.0, 1.0,
+      0.0, -1.0, 1.0, 1.0, 1.0
+    ];
+
+    setBuffer(gl, shaderProgram, vertices, dimension, subarrayLen);
+    draw(gl, gl.LINES, vertices, subarrayLen);
+
+    var segment1 = [
+      -0.35, 0.8, 1.0, 1.0, 1.0,
+      -0.65, 0.8, 1.0, 1.0, 1.0,
+      -0.4, 0.85, 1.0, 1.0, 1.0,
+      -0.6, 0.85, 1.0, 1.0, 1.0,
+      -0.4, 0.75, 1.0, 1.0, 1.0,
+      -0.6, 0.75, 1.0, 1.0, 1.0,
+    ];
+
+    var segment4 = [
+      -0.35, 0.5, 1.0, 1.0, 1.0,
+      -0.65, 0.5, 1.0, 1.0, 1.0,
+      -0.4, 0.55, 1.0, 1.0, 1.0,
+      -0.6, 0.55, 1.0, 1.0, 1.0,
+      -0.4, 0.45, 1.0, 1.0, 1.0,
+      -0.6, 0.45, 1.0, 1.0, 1.0,
+    ];
+
+    var segment8 = [
+      -0.35, 0.2, 1.0, 1.0, 1.0,
+      -0.65, 0.2, 1.0, 1.0, 1.0,
+      -0.4, 0.25, 1.0, 1.0, 1.0,
+      -0.6, 0.25, 1.0, 1.0, 1.0,
+      -0.4, 0.15, 1.0, 1.0, 1.0,
+      -0.6, 0.15, 1.0, 1.0, 1.0,
+    ];
+
+
+
+    setBuffer(gl, shaderProgram, segment1, dimension, subarrayLen);
+    draw(gl, gl.LINES, segment1, subarrayLen);
+    setBuffer(gl, shaderProgram, segment2, dimension, subarrayLen);
+    draw(gl, gl.LINES, segment2, subarrayLen);
+    setBuffer(gl, shaderProgram, segment3, dimension, subarrayLen);
+    draw(gl, gl.LINES, segment3, subarrayLen);
+    setBuffer(gl, shaderProgram, segment4, dimension, subarrayLen);
+    draw(gl, gl.LINES, segment4, subarrayLen);
+    setBuffer(gl, shaderProgram, segment5, dimension, subarrayLen);
+    draw(gl, gl.LINES, segment5, subarrayLen);
+    setBuffer(gl, shaderProgram, segment6, dimension, subarrayLen);
+    draw(gl, gl.LINES, segment6, subarrayLen);
+    setBuffer(gl, shaderProgram, segment7, dimension, subarrayLen);
+    draw(gl, gl.LINES, segment7, subarrayLen);
+    setBuffer(gl, shaderProgram, segment8, dimension, subarrayLen);
+    draw(gl, gl.LINES, segment8, subarrayLen);
+    setBuffer(gl, shaderProgram, segment9, dimension, subarrayLen);
+    draw(gl, gl.LINES, segment9, subarrayLen);
 }
 
