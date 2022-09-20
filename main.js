@@ -74,9 +74,6 @@ function main(){
       0.0, -1.0, 1.0, 1.0, 1.0
     ];
 
-    setBuffer(gl, shaderProgram, vertices, dimension, subarrayLen);
-    draw(gl, gl.LINES, vertices, subarrayLen);
-
     var segment1 = [
       -0.35, 0.8, 1.0, 1.0, 1.0,
       -0.65, 0.8, 1.0, 1.0, 1.0,
@@ -215,25 +212,149 @@ function main(){
       -0.65, 0.5, 1.0, 1.0, 1.0,
       -0.6, 0.45, 1.0, 1.0, 1.0,
     ];
+    
+    
+    draw(gl, shaderProgram, gl.LINES, vertices, dimension, subarrayLen);
+
+    draw(gl, shaderProgram, gl.LINES, segment1, dimension, subarrayLen);
+    draw(gl, shaderProgram, gl.LINES, segment2, dimension, subarrayLen);
+    draw(gl, shaderProgram, gl.LINES, segment3, dimension, subarrayLen);
+    draw(gl, shaderProgram, gl.LINES, segment4, dimension, subarrayLen);
+    // draw(gl, shaderProgram, gl.LINES, segment5, dimension, subarrayLen);
+    draw(gl, shaderProgram, gl.LINES, segment6, dimension, subarrayLen);
+    draw(gl, shaderProgram, gl.LINES, segment7, dimension, subarrayLen);
+
+    draw(gl, shaderProgram, gl.LINES, vertices, dimension, subarrayLen);
 
 
-    setBuffer(gl, shaderProgram, segment1, dimension, subarrayLen);
-    draw(gl, gl.LINES, segment1, subarrayLen);
-    setBuffer(gl, shaderProgram, segment2, dimension, subarrayLen);
-    draw(gl, gl.LINES, segment2, subarrayLen);
-    setBuffer(gl, shaderProgram, segment3, dimension, subarrayLen);
-    draw(gl, gl.LINES, segment3, subarrayLen);
-    setBuffer(gl, shaderProgram, segment4, dimension, subarrayLen);
-    draw(gl, gl.LINES, segment4, subarrayLen);
-    setBuffer(gl, shaderProgram, segment5, dimension, subarrayLen);
-    draw(gl, gl.LINES, segment5, subarrayLen);
-    setBuffer(gl, shaderProgram, segment6, dimension, subarrayLen);
-    draw(gl, gl.LINES, segment6, subarrayLen);
-    setBuffer(gl, shaderProgram, segment7, dimension, subarrayLen);
-    draw(gl, gl.LINES, segment7, subarrayLen);
-    setBuffer(gl, shaderProgram, segment8, dimension, subarrayLen);
-    draw(gl, gl.LINES, segment8, subarrayLen);
-    setBuffer(gl, shaderProgram, segment9, dimension, subarrayLen);
-    draw(gl, gl.LINES, segment9, subarrayLen);
+    segment1 = [
+      0.65, 0.8, 1.0, 1.0, 1.0,
+      0.35, 0.8, 1.0, 1.0, 1.0,
+      0.6, 0.85, 1.0, 1.0, 1.0,
+      0.4, 0.85, 1.0, 1.0, 1.0,
+      0.4, 0.75, 1.0, 1.0, 1.0,
+      0.6, 0.75, 1.0, 1.0, 1.0,
+
+      0.65, 0.8, 1.0, 1.0, 1.0,
+      0.6, 0.75, 1.0, 1.0, 1.0,
+      
+      0.65, 0.8, 1.0, 1.0, 1.0,
+      0.6, 0.85, 1.0, 1.0, 1.0,
+      
+      0.35, 0.8, 1.0, 1.0, 1.0,
+      0.4, 0.75, 1.0, 1.0, 1.0,
+      
+      0.35, 0.8, 1.0, 1.0, 1.0,
+      0.4, 0.85, 1.0, 1.0, 1.0,
+    ];
+    
+    segment3 = [
+      0.65, 0.5, 1.0, 1.0, 1.0,
+      0.65, 0.2, 1.0, 1.0, 1.0,
+      0.7, 0.45, 1.0, 1.0, 1.0,
+      0.7, 0.25, 1.0, 1.0, 1.0,
+      0.6, 0.45, 1.0, 1.0, 1.0,
+      0.6, 0.25, 1.0, 1.0, 1.0,
+
+      0.7, 0.45, 1.0, 1.0, 1.0,
+      1-0.35, 0.5, 1.0, 1.0, 1.0,
+      1-0.4, 0.45, 1.0, 1.0, 1.0,
+      1-0.35, 0.5, 1.0, 1.0, 1.0,
+      
+      1-0.35, 0.2, 1.0, 1.0, 1.0,
+      1-0.3, 0.25, 1.0, 1.0, 1.0,
+      1-0.35, 0.2, 1.0, 1.0, 1.0,
+      1-0.4, 0.25, 1.0, 1.0, 1.0,
+    ];
+
+    var segment4 = [
+      1-0.35, 0.2, 1.0, 1.0, 1.0,
+      1-0.65, 0.2, 1.0, 1.0, 1.0,
+      1-0.4, 0.25, 1.0, 1.0, 1.0,
+      1-0.6, 0.25, 1.0, 1.0, 1.0,
+      1-0.4, 0.15, 1.0, 1.0, 1.0,
+      1-0.6, 0.15, 1.0, 1.0, 1.0,
+
+      1-0.35, 0.2, 1.0, 1.0, 1.0,
+      1-0.4, 0.25, 1.0, 1.0, 1.0,
+
+      1-0.35, 0.2, 1.0, 1.0, 1.0,
+      1-0.4, 0.15, 1.0, 1.0, 1.0,
+
+      1-0.65, 0.2, 1.0, 1.0, 1.0,
+      1-0.6, 0.25, 1.0, 1.0, 1.0,
+
+      1-0.65, 0.2, 1.0, 1.0, 1.0,
+      1-0.6, 0.15, 1.0, 1.0, 1.0,
+    ];
+
+    var segment5 = [
+      1-0.65, 0.5, 1.0, 1.0, 1.0,
+      1-0.65, 0.2, 1.0, 1.0, 1.0,
+      1-0.6, 0.45, 1.0, 1.0, 1.0,
+      1-0.6, 0.25, 1.0, 1.0, 1.0,
+      1-0.7, 0.45, 1.0, 1.0, 1.0,
+      1-0.7, 0.25, 1.0, 1.0, 1.0,
+
+      1-0.6, 0.45, 1.0, 1.0, 1.0,
+      1-0.65, 0.5, 1.0, 1.0, 1.0,
+      1-0.7, 0.45, 1.0, 1.0, 1.0,
+      1-0.65, 0.5, 1.0, 1.0, 1.0,
+      
+      1-0.65, 0.2, 1.0, 1.0, 1.0,
+      1-0.6, 0.25, 1.0, 1.0, 1.0,
+      1-0.65, 0.2, 1.0, 1.0, 1.0,
+      1-0.7, 0.25, 1.0, 1.0, 1.0,
+    ];
+
+    var segment6 = [
+      1-0.65, 0.8, 1.0, 1.0, 1.0,
+      1-0.65, 0.5, 1.0, 1.0, 1.0,
+      1-0.6, 0.75, 1.0, 1.0, 1.0,
+      1-0.6, 0.55, 1.0, 1.0, 1.0,
+      1-0.7, 0.75, 1.0, 1.0, 1.0,
+      1-0.7, 0.55, 1.0, 1.0, 1.0,
+
+      1-0.6, 0.75, 1.0, 1.0, 1.0,
+      1-0.65, 0.8, 1.0, 1.0, 1.0,
+      1-0.7, 0.75, 1.0, 1.0, 1.0,
+      1-0.65, 0.8, 1.0, 1.0, 1.0,
+      
+      1-0.65, 0.5, 1.0, 1.0, 1.0,
+      1-0.6, 0.55, 1.0, 1.0, 1.0,
+      1-0.65, 0.5, 1.0, 1.0, 1.0,
+      1-0.7, 0.55, 1.0, 1.0, 1.0,
+    ];
+
+    var segment7 = [
+      1-0.35, 0.5, 1.0, 1.0, 1.0,
+      1-0.65, 0.5, 1.0, 1.0, 1.0,
+      1-0.4, 0.55, 1.0, 1.0, 1.0,
+      1-0.6, 0.55, 1.0, 1.0, 1.0,
+      1-0.4, 0.45, 1.0, 1.0, 1.0,
+      1-0.6, 0.45, 1.0, 1.0, 1.0,
+
+      1-0.35, 0.5, 1.0, 1.0, 1.0,
+      1-0.4, 0.55, 1.0, 1.0, 1.0,
+
+      1-0.35, 0.5, 1.0, 1.0, 1.0,
+      1-0.4, 0.45, 1.0, 1.0, 1.0,
+
+      1-0.65, 0.5, 1.0, 1.0, 1.0,
+      1-0.6, 0.55, 1.0, 1.0, 1.0,
+
+      1-0.65, 0.5, 1.0, 1.0, 1.0,
+      1-0.6, 0.45, 1.0, 1.0, 1.0,
+    ];
+
+    draw(gl, shaderProgram, gl.LINES, segment1, dimension, subarrayLen);
+    draw(gl, shaderProgram, gl.LINES, segment2, dimension, subarrayLen);
+    draw(gl, shaderProgram, gl.LINES, segment3, dimension, subarrayLen);
+    draw(gl, shaderProgram, gl.LINES, segment4, dimension, subarrayLen);
+    // draw(gl, shaderProgram, gl.LINES, segment5, dimension, subarrayLen);
+    draw(gl, shaderProgram, gl.LINES, segment6, dimension, subarrayLen);
+    draw(gl, shaderProgram, gl.LINES, segment7, dimension, subarrayLen);
+
+    drawSevenSegment(8, 0, 0, 0.3, 0.1);
 }
 
