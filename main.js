@@ -551,7 +551,18 @@ function main(){
     freeze = !freeze;
   }
 
+  function onKeyDown(event){
+    freeze = !freeze;
+    onKeyUp();
+  }
+
+  function onKeyUp(event){
+    freeze = !freeze;
+  }
+
   document.getElementById("stop-btn").addEventListener("click", onMouseClick);
+  document.addEventListener("keydown", onKeyDown);
+  document.addEventListener("keyup", onKeyUp);
 }
 
 
