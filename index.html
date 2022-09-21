@@ -12,13 +12,32 @@
         width: 100%;
     }
 
+    .flex{
+        height: 95vh;
+        width: 95vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+        flex-direction: column;
+    }
+
+    .flex-child{
+        height: 50%;
+        width: 50%;
+        background-color: yellow;
+    }
 
 </style>
 
 <body onload="main()">
-    <canvas id="myCanvas">
+    <div class="flex">
+        <div class="flex-child">
+            <canvas id="myCanvas"></canvas>
+        </div>
+        <button id="stop-btn">Stop</button>
+    </div>
 
-    </canvas>
 
     <script src="helper.js"></script>
     <script src="main.js"></script>

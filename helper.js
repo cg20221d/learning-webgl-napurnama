@@ -51,3 +51,4 @@ function setBuffer(gl, shaderProgram, vertices, dimension, subarrayLen){
     gl.vertexAttribPointer(aColor, subarrayLen-dimension, gl.FLOAT, false, subarrayLen * Float32Array.BYTES_PER_ELEMENT, dimension * Float32Array.BYTES_PER_ELEMENT);
     gl.enableVertexAttribArray(aColor);
 }
+
