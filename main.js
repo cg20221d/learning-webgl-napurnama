@@ -37,11 +37,13 @@ function main(){
   attribute vec3 aColor;
   varying vec3 vColor;
   uniform float uTheta;
+  uniform float uXAcc;
+  uniform float uYAcc;
 
   void main(){
       vColor = aColor;
-      float x = -sin(uTheta) * aPosition.x + cos(uTheta) * aPosition.y;
-      float y = sin(uTheta) * aPosition.y + cos(uTheta) * aPosition.x;
+      float x = -sin(uTheta) * (aPosition.x) + cos(uTheta) * (aPosition.y) + uXAcc;
+      float y = sin(uTheta) * (aPosition.y) + cos(uTheta) * (aPosition.x) + uYAcc;
       float z = 0.0;
       float w = 1.0;
 
@@ -526,13 +528,18 @@ function main(){
   
   let vertices = [
     -0.5, -0.5, 1.0, 1.0, 0.0,
+    -0.5, 0.5, 1.0, 0.0, 1.0,
     0.5, -0.5, 0.0, 1.0, 1.0,
     0.5, 0.5, 1.0, 0.0, 1.0,
   ]
   draw(gl, shaderProgram, gl.TRIANGLES, vertices, dimension, subarrayLen);
 
   var uTheta = gl.getUniformLocation(shaderProgram, "uTheta");
+  var uXAcc = gl.getUniformLocation(shaderProgram, "uXAcc");
+  var uYAcc = gl.getUniformLocation(shaderProgram, "uYAcc");
   var theta = 0.0;
+  var xAcc = 0;
+  var yAcc = 0;
 
   let freeze = false;
 
@@ -541,6 +548,8 @@ function main(){
       gl.clear(gl.COLOR_BUFFER_BIT);
       theta += 0.0125;
       gl.uniform1f(uTheta, theta);
+      gl.uniform1f(uXAcc, xAcc);
+      gl.uniform1f(uYAcc, yAcc);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertices.length/subarrayLen);
     }
     requestAnimationFrame(render);
@@ -560,9 +569,69 @@ function main(){
     freeze = !freeze;
   }
 
+  function onAUp(event){
+    if(event.code == "KeyA"){
+      xAcc += 0;
+    }
+  }
+
+  function onADown(event){
+    if(event.code == "KeyA"){
+      xAcc += -0.1;
+    }
+  }
+
+  function onDUp(event){
+    if(event.code == "KeyD"){
+      xAcc += 0;
+    }
+  }
+
+  function onDDown(event){
+    if(event.code == "KeyD"){
+      xAcc += 0.1;
+    }
+  }
+
+  function onWUp(event){
+    if(event.code == "KeyW"){
+      yAcc += 0;
+    }
+  }
+
+  function onWDown(event){
+    if(event.code == "KeyW"){
+      yAcc += 0.1;
+    }
+  }
+
+  function onSUp(event){
+    if(event.code == "KeyS"){
+      yAcc += 0;
+    }
+  }
+
+  function onSDown(event){
+    if(event.code == "KeyS"){
+      yAcc -= 0.1;
+    }
+  }
+
   document.getElementById("stop-btn").addEventListener("click", onMouseClick);
-  document.addEventListener("keydown", onKeyDown);
-  document.addEventListener("keyup", onKeyUp);
+  // document.addEventListener("keydown", onKeyDown);
+  // document.addEventListener("keyup", onKeyUp);
+
+  document.addEventListener("keydown", onSDown);
+  document.addEventListener("keyup", onSUp);
+
+  document.addEventListener("keydown", onWDown);
+  document.addEventListener("keyup", onWUp);
+
+  document.addEventListener("keydown", onADown);
+  document.addEventListener("keyup", onAUp);
+
+  document.addEventListener("keydown", onDDown);
+  document.addEventListener("keyup", onDUp);
 }
 
 
