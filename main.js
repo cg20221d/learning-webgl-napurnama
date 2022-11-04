@@ -12,43 +12,26 @@ function main(){
   // Vertex shader
   let vertexShaderCode = 
   `
-  attribute vec2 aPosition;
-  attribute vec3 aColor;
-  varying vec3 vColor;
-  uniform float uTheta;
-
-  void main(){
-      vColor = aColor;
-      float x = aPosition.x;
-      float y = aPosition.y;
-      float z = 0.0;
-      float w = 1.0;
-
-      gl_PointSize = 10.0;
-      gl_Position = vec4(x, y, z, w);
-  }
-
-
-  `; //program code
-
-  vertexShaderCode = 
-  `
-  attribute vec2 aPosition;
+  attribute vec3 aPosition;
   attribute vec3 aColor;
   varying vec3 vColor;
   uniform float uTheta;
   uniform float uXAcc;
   uniform float uYAcc;
 
+  uniform mat4 uModel;
+  uniform mat4 uView;
+  uniform mat4 uProjection;
+
   void main(){
       vColor = aColor;
       float x = (aPosition.x);
       float y = (aPosition.y);
-      float z = 0.0;
+      float z = (aPosition.z);
       float w = 1.0;
 
       gl_PointSize = 10.0;
-      gl_Position = vec4(x, y, z, w);
+      gl_Position = uProjection * uView * uModel * vec4(x, y, z, w);
   }
 
 
@@ -85,7 +68,24 @@ function main(){
   gl.useProgram(shaderProgram);
   //#endregion
 
+  // #region TUGAS WEBGL #2
+  const modelLoc = gl.getUniformLocation(shaderProgram, 'uModel');
+  const viewLoc = gl.getUniformLocation(shaderProgram, 'uView');
+  const projectionLoc = gl.getUniformLocation(shaderProgram, 'uProjection');
   
+  const model = glMatrix.mat4.create();
+  const view = glMatrix.mat4.create();
+  const projection = glMatrix.mat4.create();
+
+  console.log(model);
+  console.log(view);
+  console.log(projection);
+
+  gl.uniformMatrix4fv(modelLoc, false, model);
+  gl.uniformMatrix4fv(viewLoc, false, view);
+  gl.uniformMatrix4fv(projectionLoc, false, projection);
+  //#endregion
+
   gl.clearColor(1.0, 0.5, 0.0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
   
