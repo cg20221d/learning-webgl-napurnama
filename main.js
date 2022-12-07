@@ -216,9 +216,48 @@ function main(){
   var identityMatrix = new Float32Array(16);
   glMatrix.mat4.identity(identityMatrix);
 
+
+  var xSpeed = 0.0;
+  var zSpeed = 0.0;
+ 
+  function onKeydown(event) {
+    console.log(event.keyCode, xSpeed, zSpeed);
+
+    // horizontal
+    if (event.keyCode == 74) {  // j
+      xSpeed += 0.1;
+    } else if (event.keyCode == 76) {   // l
+      xSpeed -= 0.1;
+    }
+
+    //depth
+    if (event.keyCode == 73) {  // i
+      zSpeed += 0.1;
+    } else if (event.keyCode == 75) {   // k
+      zSpeed -= 0.1;
+    }
+  }
+
+  function onKeyup(event) {
+    console.log(event.keyCode, xSpeed, zSpeed);
+
+    if (event.keyCode == 74) xSpeed += 0.1; // j
+    if (event.keyCode == 76) xSpeed -= 0.1; // l
+    if (event.keyCode == 73) {  // i
+      zSpeed += 0.1;
+    } else if (event.keyCode == 75) {   // k
+      zSpeed -= 0.1;
+    }
+  }
+
+  document.addEventListener('keydown', onKeydown);
+  document.addEventListener('keyup', onKeyup);
+
   const loop = () => {
     angle = performance.now() / 1000/ 6 * 2 * Math.PI;
-    glMatrix.mat4.rotate(modelMatrix, identityMatrix, angle, [1,1,1]);
+    glMatrix.mat4.translate(
+      modelMatrix, identityMatrix, [xSpeed, 0, zSpeed]
+    );
 
     gl.uniformMatrix4fv(ModelUniformPointer, gl.FALSE, modelMatrix);
 
