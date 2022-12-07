@@ -65,10 +65,15 @@ function main(){
   uniform mat4 uModel;
   uniform mat4 uView;
   uniform mat4 uProjection;
+  
+  uniform vec3 uAmbient;
 
   void main(){
       vColor = aColor;
       gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
+
+      vec3 ambient = uAmbient * aColor.rgb;
+      vColor = vec4(ambient, aColor.a);
   }
 
   `
@@ -188,6 +193,7 @@ function main(){
 	gl.enableVertexAttribArray(positionAttribLocation);
 	gl.enableVertexAttribArray(colorAttribLocation);
 
+  var uAmbientPointer = gl.getUniformLocation(shaderProgram, 'uAmbient');
   var ModelUniformPointer = gl.getUniformLocation(shaderProgram, 'uModel');
   var ViewUniformPointer = gl.getUniformLocation(shaderProgram, 'uView');
   var ProjectionUniformPointer = gl.getUniformLocation(shaderProgram, 'uProjection');
@@ -260,6 +266,8 @@ function main(){
     );
 
     gl.uniformMatrix4fv(ModelUniformPointer, gl.FALSE, modelMatrix);
+
+    gl.uniform3f(uAmbientPointer, 0.395, 0.395, 0.395);
 
     gl.clearColor(0.75, 0.85, 0.8, 1.0);
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
