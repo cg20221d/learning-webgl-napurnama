@@ -1,3 +1,7 @@
+// const { glMatrix } = require("./gl-matrix");
+
+// const { mat4, glMatrix } = require("./gl-matrix");
+
 function main(){
   
 
@@ -44,6 +48,25 @@ function main(){
   gl.attachShader(shaderProgram, vertexShader);
   //#endregion
   
+  vertexShader = `
+  precision mediump float;
+  
+  attribute vec3 aPosition;
+  attribute vec3 aColor;
+  
+  varying vec3 vColor;
+
+  uniform mat4 uModel;
+  uniform mat4 uView;
+  uniform mat4 uProjection;
+
+  void main(){
+      vColor = aColor;
+      gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
+  }
+
+  `
+
   //#region Fragment shader
   const fragmentShaderCode = `
   precision mediump float;
@@ -64,43 +87,90 @@ function main(){
   
   //#region analogous to linking and execution (using)
   gl.linkProgram(shaderProgram);
-  if(1
-    //!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)
-    ){
-    console.log(gl.getShaderInfoLog(vertexShader))
-    console.log(gl.getShaderInfoLog(fragmentShader))
-  }
   gl.useProgram(shaderProgram);
   //#endregion
 
-  // #region TUGAS WEBGL #2
-  const modelLoc = gl.getUniformLocation(shaderProgram, 'uModel');
-  const viewLoc = gl.getUniformLocation(shaderProgram, 'uView');
-  const projectionLoc = gl.getUniformLocation(shaderProgram, 'uProjection');
-  
-  const model = glMatrix.mat4.create();
-  const view = glMatrix.mat4.create();
-  const projection = glMatrix.mat4.create();
-
-  console.log(model);
-  console.log(view);
-  console.log(projection);
-
-  glMatrix.mat4.rotateZ(model, model, .1)
-  glMatrix.mat4.scale(model, model, [.8, .8, .8])
-
-  glMatrix.mat4.lookAt(view, [0,0,0], [0,0,0], [0,0,0])
-
-  gl.uniformMatrix4fv(modelLoc, false, model);
-  gl.uniformMatrix4fv(viewLoc, false, view);
-  gl.uniformMatrix4fv(projectionLoc, false, projection);
-  //#endregion
-
-  gl.clearColor(1.0, 0.5, 0.0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  
   const dimension = 3;
   const subarrayLen = 6;
+
+  //#region create cube
+  var vertices = [
+    0.0, 0.5, 0.0,  1.0,1.0,0.0,
+    -0.5, -0.5, 0.0,  0.7,0.0,1.0,
+    0.5, -0.5, 0.0,  0.1,1.0,0.6,
+  ]
+
+  setBuffer(gl, shaderProgram, vertices, dimension, subarrayLen);
+
+  var ModelUniformPointer = gl.getUniformLocation(shaderProgram, 'uModel');
+  var ViewUniformPointer = gl.getUniformLocation(shaderProgram, 'uView');
+  var ProjectionUniformPointer = gl.getUniformLocation(shaderProgram, 'uProjection');
+
+  var modelMatrix = new Float32Array(16);
+  var viewMatrix = new Float32Array(16);
+  var projectionMatrix = new Float32Array(16);
+
+  glMatrix.mat4.identity(modelMatrix);
+
+  // glMatrix.mat4.identity(viewMatrix);
+  glMatrix.mat4.lookAt(viewMatrix, [0, 0, -5], [0, 0, 0], [0, 1, 0])
+  console.log(viewMatrix);
+
+  // glMatrix.mat4.identity(projectionMatrix);
+  glMatrix.mat4.perspective(projectionMatrix, Math.PI / 180 * 45, canvas.width / canvas.height, 0.1, 1000.0);
+  console.log(projectionMatrix);
+
+  gl.uniformMatrix4fv(ModelUniformPointer, gl.FALSE, modelMatrix);
+  gl.uniformMatrix4fv(ViewUniformPointer, gl.FALSE, viewMatrix);
+  gl.uniformMatrix4fv(ProjectionUniformPointer, gl.FALSE, projectionMatrix);
+
+  // draw(gl, shaderProgram, gl.TRIANGLES, vertices, dimension, subarrayLen);
+
+  var angle = 0;
+  var identityMatrix = new Float32Array(16);
+  glMatrix.mat4.identity(identityMatrix);
+
+  const loop = () => {
+    angle = performance.now() / 1000/ 6 * 2 * Math.PI;
+    glMatrix.mat4.rotate(modelMatrix, identityMatrix, angle, [0,1,0]);
+
+    gl.uniformMatrix4fv(ModelUniformPointer, gl.FALSE, modelMatrix);
+
+    gl.clearColor(0.75, 0.85, 0.8, 1.0);
+    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 3)
+
+    requestAnimationFrame(loop);
+  }
+
+  loop();
+  //#endregion
+  
+  // #region TUGAS WEBGL #2
+  // const modelLoc = gl.getUniformLocation(shaderProgram, 'uModel');
+  // const viewLoc = gl.getUniformLocation(shaderProgram, 'uView');
+  // const projectionLoc = gl.getUniformLocation(shaderProgram, 'uProjection');
+  
+  // const model = glMatrix.mat4.create();
+  // const view = glMatrix.mat4.create();
+  // const projection = glMatrix.mat4.create();
+
+  // console.log(model);
+  // console.log(view);
+  // console.log(projection);
+
+  // glMatrix.mat4.rotateZ(model, model, .1)
+  // glMatrix.mat4.scale(model, model, [.8, .8, .8])
+
+  // glMatrix.mat4.lookAt(view, [0,0,0], [0,0,0], [0,0,0])
+
+  // gl.uniformMatrix4fv(modelLoc, false, model);
+  // gl.uniformMatrix4fv(viewLoc, false, view);
+  // gl.uniformMatrix4fv(projectionLoc, false, projection);
+  // //#endregion
+
+  // gl.clearColor(1.0, 0.5, 0.0, 1.0);
+  // gl.clear(gl.COLOR_BUFFER_BIT);
   
   
   const tugasSatu = () => {
@@ -478,8 +548,9 @@ function main(){
   
     draw(gl, shaderProgram, gl.TRIANGLES, A, dimension, subarrayLen);
   }
-  tugasSatu();
-  
+  // tugasSatu();
+  //#endregion
+  // tugasSatu();
 }
 
 
