@@ -2,15 +2,21 @@
 
 // const { mat4, glMatrix } = require("./gl-matrix");
 
+let gl;
+
 function main(){
   
 
   let canvas = document.getElementById("myCanvas");
-  let gl = canvas.getContext("webgl");
+  gl = canvas.getContext("webgl");
   
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.CULL_FACE);
+  gl.frontFace(gl.CCW);
+  gl.cullFace(gl.BACK);
 
   //prepare program
   let shaderProgram = gl.createProgram();
@@ -95,12 +101,92 @@ function main(){
 
   //#region create cube
   var vertices = [
-    0.0, 0.5, 0.0,  1.0,1.0,0.0,
-    -0.5, -0.5, 0.0,  0.7,0.0,1.0,
-    0.5, -0.5, 0.0,  0.1,1.0,0.6,
+    //top
+    -1.0, 1.0, -1.0,  0.5,0.5,0.5,
+    -1.0, 1.0, 1.0, 0.5,0.5,0.5,
+    1.0, 1.0, 1.0,  0.5,0.5,0.5,
+    1.0, 1.0, -1.0,  0.5,0.5,0.5,
+
+    //left
+    -1.0, 1.0, 1.0,  0.75,0.25,0.5,
+    -1.0, -1.0, 1.0, 0.75,0.25,0.5,
+    -1.0, -1.0, -1.0,  0.75,0.25,0.5,
+    -1.0, 1.0, -1.0,  0.75,0.25,0.5,
+
+    //right
+    1.0, 1.0, 1.0,  0.25,0.5,0.25,
+    1.0, -1.0, 1.0, 0.25,0.5,0.25,
+    1.0, -1.0, -1.0,  0.25,0.5,0.25,
+    1.0, 1.0, -1.0,  0.25,0.5,0.25,
+
+    //front
+    1.0, 1.0, 1.0,  1.0,0.5,0.5,
+    1.0, -1.0, 1.0, 1.0,0.5,0.5,
+    -1.0, -1.0, 1.0,  1.0,0.5,0.5,
+    -1.0, 1.0, 1.0,  1.0,0.5,0.5,
+
+    //back
+    1.0, 1.0, -1.0,  0.5,0.1,0.5,
+    1.0, -1.0, -1.0, 0.5,0.1,0.5,
+    -1.0, -1.0, -1.0,  0.5,0.1,0.5,
+    -1.0, 1.0, -1.0,  0.5,0.1,0.5,
+
+    //bottom
+    -1.0, -1.0, -1.0,  0.5,0.5,0.5,
+    -1.0, -1.0, 1.0, 0.5,0.5,0.5,
+    1.0, -1.0, 1.0,  0.5,0.5,0.5,
+    1.0, -1.0, -1.0,  0.5,0.5,0.5,
   ]
 
-  setBuffer(gl, shaderProgram, vertices, dimension, subarrayLen);
+  const indices = [
+    0, 1, 2,
+    0, 2, 3,
+
+    5, 4, 6,
+    6, 4, 7,
+
+    8, 9, 10,
+    8, 10, 11,
+
+    13, 12, 14,
+    15, 14, 12,
+    
+    16, 17, 18,
+    16, 18, 19,
+
+    21, 20, 22,
+    22, 20, 23,
+  ]
+
+  var boxVertexBufferObject = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+	var boxIndexBufferObject = gl.createBuffer();
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+	var positionAttribLocation = gl.getAttribLocation(shaderProgram, 'aPosition');
+	var colorAttribLocation = gl.getAttribLocation(shaderProgram, 'aColor');
+	gl.vertexAttribPointer(
+		positionAttribLocation, // Attribute location
+		dimension, // Number of elements per attribute
+		gl.FLOAT, // Type of elements
+		gl.FALSE,
+		subarrayLen * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
+		0 // Offset from the beginning of a single vertex to this attribute
+	);
+	gl.vertexAttribPointer(
+		colorAttribLocation, // Attribute location
+		3, // Number of elements per attribute
+		gl.FLOAT, // Type of elements
+		gl.FALSE,
+		subarrayLen * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
+		dimension * Float32Array.BYTES_PER_ELEMENT // Offset from the beginning of a single vertex to this attribute
+	);
+
+	gl.enableVertexAttribArray(positionAttribLocation);
+	gl.enableVertexAttribArray(colorAttribLocation);
 
   var ModelUniformPointer = gl.getUniformLocation(shaderProgram, 'uModel');
   var ViewUniformPointer = gl.getUniformLocation(shaderProgram, 'uView');
@@ -113,7 +199,7 @@ function main(){
   glMatrix.mat4.identity(modelMatrix);
 
   // glMatrix.mat4.identity(viewMatrix);
-  glMatrix.mat4.lookAt(viewMatrix, [0, 0, -5], [0, 0, 0], [0, 1, 0])
+  glMatrix.mat4.lookAt(viewMatrix, [0, 0, -7], [0, 0, 0], [0, 1, 0])
   console.log(viewMatrix);
 
   // glMatrix.mat4.identity(projectionMatrix);
@@ -132,13 +218,13 @@ function main(){
 
   const loop = () => {
     angle = performance.now() / 1000/ 6 * 2 * Math.PI;
-    glMatrix.mat4.rotate(modelMatrix, identityMatrix, angle, [0,1,0]);
+    glMatrix.mat4.rotate(modelMatrix, identityMatrix, angle, [1,1,1]);
 
     gl.uniformMatrix4fv(ModelUniformPointer, gl.FALSE, modelMatrix);
 
     gl.clearColor(0.75, 0.85, 0.8, 1.0);
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, 3)
+    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0)
 
     requestAnimationFrame(loop);
   }
