@@ -8,16 +8,16 @@ function main(){
   canvas.height = window.innerHeight;
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
+  //prepare program
+  let shaderProgram = gl.createProgram();
+
   //#region analogous to source code
   // Vertex shader
-  let vertexShaderCode = 
+  const vertexShaderCode = 
   `
   attribute vec3 aPosition;
   attribute vec3 aColor;
   varying vec3 vColor;
-  uniform float uTheta;
-  uniform float uXAcc;
-  uniform float uYAcc;
 
   uniform mat4 uModel;
   uniform mat4 uView;
@@ -35,11 +35,17 @@ function main(){
   }
 
 
-  `; //program code
+  `; 
+
+  //analogous to .o file creation
+  let vertexShader = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vertexShader, vertexShaderCode);
+  gl.compileShader(vertexShader); 
+  gl.attachShader(shaderProgram, vertexShader);
+  //#endregion
   
-  // Fragment shader
-  let fragmentShaderCode = 
-  `
+  //#region Fragment shader
+  const fragmentShaderCode = `
   precision mediump float;
   varying vec3 vColor;
 
@@ -48,23 +54,22 @@ function main(){
       gl_FragColor.a = 1.0;
   }
   `;
-  //#endregion
 
-  //#region analogous to .o file creation
-  let vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
-  gl.shaderSource(vertexShaderObject, vertexShaderCode);
-  gl.compileShader(vertexShaderObject); 
-  
-  let fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
-  gl.shaderSource(fragmentShaderObject, fragmentShaderCode);
-  gl.compileShader(fragmentShaderObject);
+  //analogous to .o file creation
+  let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fragmentShader, fragmentShaderCode);
+  gl.compileShader(fragmentShader);
+  gl.attachShader(shaderProgram, fragmentShader);
   //#endregion
   
   //#region analogous to linking and execution (using)
-  let shaderProgram = gl.createProgram();
-  gl.attachShader(shaderProgram, vertexShaderObject);
-  gl.attachShader(shaderProgram, fragmentShaderObject);
   gl.linkProgram(shaderProgram);
+  if(1
+    //!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)
+    ){
+    console.log(gl.getShaderInfoLog(vertexShader))
+    console.log(gl.getShaderInfoLog(fragmentShader))
+  }
   gl.useProgram(shaderProgram);
   //#endregion
 
@@ -80,6 +85,11 @@ function main(){
   console.log(model);
   console.log(view);
   console.log(projection);
+
+  glMatrix.mat4.rotateZ(model, model, .1)
+  glMatrix.mat4.scale(model, model, [.8, .8, .8])
+
+  glMatrix.mat4.lookAt(view, [0,0,0], [0,0,0], [0,0,0])
 
   gl.uniformMatrix4fv(modelLoc, false, model);
   gl.uniformMatrix4fv(viewLoc, false, view);
@@ -470,113 +480,6 @@ function main(){
   }
   tugasSatu();
   
-  
-  // let vertices = [
-  //   -0.5, -0.5, 1.0, 1.0, 0.0,
-  //   -0.5, 0.5, 1.0, 0.0, 1.0,
-  //   0.5, -0.5, 0.0, 1.0, 1.0,
-  //   0.5, 0.5, 1.0, 0.0, 1.0,
-  // ]
-  // draw(gl, shaderProgram, gl.TRIANGLES, vertices, dimension, subarrayLen);
-
-  // var uTheta = gl.getUniformLocation(shaderProgram, "uTheta");
-  // var uXAcc = gl.getUniformLocation(shaderProgram, "uXAcc");
-  // var uYAcc = gl.getUniformLocation(shaderProgram, "uYAcc");
-  // var theta = 0.0;
-  // var xAcc = 0;
-  // var yAcc = 0;
-
-  // let freeze = false;
-
-  // function render(){
-  //   if(!freeze){
-  //     gl.clear(gl.COLOR_BUFFER_BIT);
-  //     theta += 0.0125;
-  //     gl.uniform1f(uTheta, theta);
-  //     gl.uniform1f(uXAcc, xAcc);
-  //     gl.uniform1f(uYAcc, yAcc);
-  //     gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertices.length/subarrayLen);
-  //   }
-  //   requestAnimationFrame(render);
-  // }
-  // requestAnimationFrame(render);
-
-  // function onMouseClick(event){
-  //   freeze = !freeze;
-  // }
-
-  // function onKeyDown(event){
-  //   freeze = !freeze;
-  //   onKeyUp();
-  // }
-
-  // function onKeyUp(event){
-  //   freeze = !freeze;
-  // }
-
-  // function onAUp(event){
-  //   if(event.code == "KeyA"){
-  //     xAcc += 0;
-  //   }
-  // }
-
-  // function onADown(event){
-  //   if(event.code == "KeyA"){
-  //     xAcc += -0.1;
-  //   }
-  // }
-
-  // function onDUp(event){
-  //   if(event.code == "KeyD"){
-  //     xAcc += 0;
-  //   }
-  // }
-
-  // function onDDown(event){
-  //   if(event.code == "KeyD"){
-  //     xAcc += 0.1;
-  //   }
-  // }
-
-  // function onWUp(event){
-  //   if(event.code == "KeyW"){
-  //     yAcc += 0;
-  //   }
-  // }
-
-  // function onWDown(event){
-  //   if(event.code == "KeyW"){
-  //     yAcc += 0.1;
-  //   }
-  // }
-
-  // function onSUp(event){
-  //   if(event.code == "KeyS"){
-  //     yAcc += 0;
-  //   }
-  // }
-
-  // function onSDown(event){
-  //   if(event.code == "KeyS"){
-  //     yAcc -= 0.1;
-  //   }
-  // }
-
-  // document.getElementById("stop-btn").addEventListener("click", onMouseClick);
-  // // document.addEventListener("keydown", onKeyDown);
-  // // document.addEventListener("keyup", onKeyUp);
-
-  // document.addEventListener("keydown", onSDown);
-  // document.addEventListener("keyup", onSUp);
-
-  // document.addEventListener("keydown", onWDown);
-  // document.addEventListener("keyup", onWUp);
-
-  // document.addEventListener("keydown", onADown);
-  // document.addEventListener("keyup", onAUp);
-
-  // document.addEventListener("keydown", onDDown);
-  // document.addEventListener("keyup", onDUp);
 }
 
 
